@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://krzychu43212.github.io/dominos-barber/sitemap.xml
