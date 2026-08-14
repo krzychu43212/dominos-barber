@@ -272,8 +272,23 @@ h2 {
 .about-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  grid-template-areas:
+    "photo intro"
+    "photo bio";
   gap: 3rem;
   align-items: start;
+}
+
+.about-intro {
+  grid-area: intro;
+}
+
+.about-photo {
+  grid-area: photo;
+}
+
+.about-bio {
+  grid-area: bio;
 }
 
 .about-photo {
@@ -307,16 +322,27 @@ h2 {
   object-position: center 35%;
 }
 
-.about-content {
+.about-intro,
+.about-bio {
   min-width: 0;
 }
 
-.about-content p {
+.about-intro .lead {
+  margin-bottom: 0;
+}
+
+.about-intro-cta.page-cta-links {
+  justify-content: flex-start;
+  margin-top: 1.5rem;
+}
+
+.about-intro p,
+.about-bio p {
   color: var(--text-muted);
   margin-bottom: 1rem;
 }
 
-.about-content p:last-child {
+.about-bio p:last-child {
   margin-bottom: 0;
 }
 
@@ -516,6 +542,146 @@ h2 {
 
 .page-hero .section-desc {
   margin: 0 auto;
+}
+
+.cal-embed {
+  width: 100%;
+  min-height: 600px;
+  margin-top: 2.5rem;
+  text-align: left;
+}
+
+.cal-embed #my-cal-inline-45min {
+  width: 100%;
+  min-height: inherit;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+.cal-consent,
+.cal-consent-message {
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.cal-consent-text {
+  margin: 0 0 1.5rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.cal-consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.cal-consent-actions .page-cta-link {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+
+.cal-consent-message p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.cal-privacy-link {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.cal-reset-btn {
+  font-size: 0.8125rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+}
+
+.privacy-content {
+  max-width: 42rem;
+  margin: 2.5rem auto 0;
+  text-align: left;
+}
+
+.privacy-section + .privacy-section {
+  margin-top: 2.5rem;
+}
+
+.privacy-section h2 {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin: 0 0 1rem;
+}
+
+.privacy-section p,
+.privacy-section li {
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.privacy-section p {
+  margin: 0 0 1rem;
+}
+
+.privacy-section p:last-child {
+  margin-bottom: 0;
+}
+
+.privacy-section ul {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+
+.privacy-section ul:last-child {
+  margin-bottom: 0;
+}
+
+.privacy-section li + li {
+  margin-top: 0.5rem;
+}
+
+.privacy-section code {
+  font-size: 0.875em;
+  padding: 0.125rem 0.375rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.25rem;
+}
+
+.footer-legal-link {
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.footer-legal-link:hover {
+  color: var(--accent-red);
+}
+
+.booking-alt {
+  margin-top: 2.5rem;
+}
+
+.booking-alt .contact-links {
+  margin-top: 1.25rem;
 }
 
 .placeholder-card {
@@ -808,7 +974,7 @@ h2 {
 
 .footer-heading {
   font-family: var(--font-display);
-  font-size: 0.8125rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -966,9 +1132,13 @@ h2 {
   }
 
   .nav--mobile.is-open {
-    max-height: 24rem;
+    max-height: 28rem;
     opacity: 1;
     visibility: visible;
+  }
+
+  .nav-mobile-list {
+    padding-bottom: 0.5rem;
   }
 
   .nav-mobile-list li + li {
@@ -1000,6 +1170,10 @@ h2 {
   .site-header {
     position: sticky;
   }
+
+  .site-header .container {
+    padding-inline: 2rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1011,17 +1185,40 @@ h2 {
     padding: 3.5rem 0 3rem;
   }
 
+  .cal-embed {
+    min-height: 500px;
+    margin-top: 2rem;
+  }
+
+  .booking-alt {
+    margin-top: 2rem;
+  }
+
   .about {
     padding-top: 2.5rem;
   }
 
   .about-grid {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    grid-template-areas:
+      "intro"
+      "photo"
+      "bio";
+    gap: 1.75rem;
+  }
+
+  .about-intro-cta.page-cta-links {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .about-intro-cta .page-cta-link {
+    width: 100%;
   }
 
   .about-photo {
-    max-width: 28rem;
+    max-width: min(14rem, 55vw);
+    max-height: 18rem;
     margin: 0 auto;
   }
 

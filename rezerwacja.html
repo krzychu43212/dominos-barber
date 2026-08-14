@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Opinie klientów — wkrótce na stronie Dominos Barber, fryzjer męski, Chopina 27A, Olszyna, 59-830, Dolnośląskie.">
-  <meta property="og:title" content="Opinie — Dominos Barber">
-  <meta property="og:description" content="Opinie klientów Dominos Barber — wkrótce na stronie. Fryzjer męski w Olszynie.">
+  <meta name="description" content="Umów wizytę online — Dominos Barber, fryzjer męski, Chopina 27A, Olszyna. Wybierz usługę i dogodny termin w kalendarzu rezerwacji.">
+  <meta property="og:title" content="Umów wizytę — Dominos Barber">
+  <meta property="og:description" content="Zarezerwuj termin w Dominos Barber online. Strzyżenie i strzyżenie z brodą — wybierz dogodną datę i godzinę.">
   <meta property="og:locale" content="pl_PL">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://krzychu43212.github.io/dominos-barber/opinie.html">
+  <meta property="og:url" content="https://krzychu43212.github.io/dominos-barber/rezerwacja.html">
   <meta property="og:image" content="https://krzychu43212.github.io/dominos-barber/images/og-image.jpg">
   <meta property="og:site_name" content="Dominos Barber">
-  <link rel="canonical" href="https://krzychu43212.github.io/dominos-barber/opinie.html">
-  <title>Opinie — Dominos Barber</title>
+  <link rel="canonical" href="https://krzychu43212.github.io/dominos-barber/rezerwacja.html">
+  <title>Umów wizytę — Dominos Barber</title>
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" href="images/favicon-32x32.png" type="image/png" sizes="32x32">
   <link rel="icon" href="images/favicon-16x16.png" type="image/png" sizes="16x16">
@@ -21,8 +21,27 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HairSalon",
+    "name": "Dominos Barber",
+    "description": "Fryzjer męski w Olszynie. Umów wizytę online lub telefonicznie.",
+    "url": "https://krzychu43212.github.io/dominos-barber/rezerwacja.html",
+    "telephone": "+48793704150",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Chopina 27A",
+      "addressLocality": "Olszyna",
+      "addressRegion": "Dolnośląskie",
+      "postalCode": "59-830",
+      "addressCountry": "PL"
+    },
+    "sameAs": ["https://www.instagram.com/dominos.barber/"]
+  }
+  </script>
 </head>
-<body data-page="opinie">
+<body data-page="rezerwacja">
   <header class="site-header">
     <div class="container header-inner">
       <a href="index.html" class="logo">
@@ -62,21 +81,48 @@
     <section class="page-hero">
       <div class="container">
         <header class="section-header">
-          <p class="eyebrow">Klienci</p>
-          <h1>Opinie</h1>
-          <p class="section-desc">Opinie klientów wkrótce zostaną dodane na stronę.</p>
+          <p class="eyebrow">Rezerwacje</p>
+          <h1>Umów wizytę</h1>
+          <p class="section-desc">Wybierz usługę i dogodny termin.</p>
         </header>
 
-        <div class="reviews-cta">
-          <div class="reviews-cta-stars" aria-hidden="true">★★★★★</div>
-          <p class="reviews-cta-text">Pracujemy nad sekcją opinii — wkrótce pojawią się tu recenzje naszych klientów. Tymczasem zobacz <a href="galeria.html" class="text-link">galerię prac</a> albo <a href="kontakt.html" class="text-link">umów wizytę</a>.</p>
-          <div class="page-cta-links">
-            <a href="galeria.html" class="page-cta-link">Galeria</a>
-            <a href="kontakt.html" class="page-cta-link page-cta-link--primary">Kontakt</a>
+        <div class="cal-embed">
+          <div class="cal-consent" id="cal-consent">
+            <p class="cal-consent-text">Aby wyświetlić kalendarz rezerwacji, konieczne jest załadowanie zewnętrznej usługi Cal.com.</p>
+            <div class="cal-consent-actions">
+              <button type="button" class="page-cta-link page-cta-link--primary" id="cal-consent-accept">Wyświetl kalendarz</button>
+              <button type="button" class="page-cta-link" id="cal-consent-reject">Nie teraz</button>
+            </div>
+          </div>
+          <div class="cal-consent-message is-hidden" id="cal-consent-rejected">
+            <p>Kalendarz rezerwacji nie został załadowany. Możesz umówić wizytę telefonicznie lub przez Instagram poniżej.</p>
+          </div>
+          <div class="cal-widget is-hidden" id="cal-widget">
+            <div style="width:100%;height:100%;overflow:scroll" id="my-cal-inline-45min"></div>
           </div>
         </div>
 
-        <div class="reviews-grid" id="reviews-grid" aria-live="polite"></div>
+        <p class="cal-privacy-link">
+          <button type="button" class="text-link cal-reset-btn" id="cal-reset-consent" title="Cofnij zapisaną decyzję i ponownie wybierz, czy wyświetlić kalendarz Cal.com na tej stronie.">Cofnij decyzję o kalendarzu</button>
+        </p>
+
+        <div class="booking-alt">
+          <p class="page-cta-text">Wolisz umówić się bezpośrednio?</p>
+          <div class="contact-links">
+            <a href="tel:+48793704150" class="contact-btn" aria-label="Zadzwoń: +48 793 704 150">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+              </svg>
+              +48 793 704 150
+            </a>
+            <a href="https://www.instagram.com/dominos.barber/" class="contact-btn contact-btn--outline" target="_blank" rel="noopener noreferrer" aria-label="Instagram: @dominos.barber">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+              @dominos.barber
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   </main>

@@ -64,10 +64,14 @@ const initScrollReveal = () => {
     applyStaggeredReveal(header.querySelectorAll(':scope > *'), 0.1);
   });
 
-  document.querySelectorAll('.about-photo').forEach((el) => applyReveal(el, 0));
+  document.querySelectorAll('.about-intro').forEach((intro) => {
+    applyStaggeredReveal(intro.querySelectorAll(':scope > *'), 0.1);
+  });
 
-  document.querySelectorAll('.about-content').forEach((content) => {
-    content.querySelectorAll(':scope > *').forEach((el, index) => {
+  document.querySelectorAll('.about-photo').forEach((el) => applyReveal(el, 0.15));
+
+  document.querySelectorAll('.about-bio').forEach((bio) => {
+    bio.querySelectorAll(':scope > *').forEach((el, index) => {
       applyReveal(el, 0.15 + Math.min(index * 0.08, 0.48));
     });
   });
@@ -78,7 +82,7 @@ const initScrollReveal = () => {
 
   document.querySelectorAll('.gallery-more').forEach((el) => applyReveal(el, 0.2));
 
-  document.querySelectorAll('.page-cta, .home-cta .section-header').forEach((el) => {
+  document.querySelectorAll('.page-cta').forEach((el) => {
     applyStaggeredReveal(el.querySelectorAll(':scope > *'), 0.1);
   });
 
@@ -88,6 +92,12 @@ const initScrollReveal = () => {
 
   document.querySelectorAll('.contact-links').forEach((links) => {
     applyStaggeredReveal(links.querySelectorAll(':scope > *'), 0.12);
+  });
+
+  document.querySelectorAll('.cal-embed').forEach((el) => applyReveal(el, 0.15));
+
+  document.querySelectorAll('.booking-alt').forEach((section) => {
+    applyStaggeredReveal(section.querySelectorAll(':scope > *'), 0.1);
   });
 
   document.querySelectorAll('.faq-list').forEach((list) => {
@@ -309,3 +319,138 @@ const reviewsGrid = document.getElementById('reviews-grid');
 if (reviewsGrid) {
   reviewsGrid.innerHTML = '';
 }
+
+// Cal.com consent — load embed only after user accepts (rezerwacja page)
+const CAL_CONSENT_KEY = 'calConsent';
+const CAL_EMBED_URL = 'https://app.cal.com/embed/embed.js';
+
+const initCalConsent = () => {
+  if (document.body.dataset.page !== 'rezerwacja') return;
+
+  const consentBlock = document.getElementById('cal-consent');
+  const rejectedBlock = document.getElementById('cal-consent-rejected');
+  const calWidget = document.getElementById('cal-widget');
+  const acceptBtn = document.getElementById('cal-consent-accept');
+  const rejectBtn = document.getElementById('cal-consent-reject');
+  const resetBtn = document.getElementById('cal-reset-consent');
+
+  if (!consentBlock || !calWidget) return;
+
+  let calLoaded = false;
+
+  const showConsent = () => {
+    consentBlock.classList.remove('is-hidden');
+    rejectedBlock?.classList.add('is-hidden');
+    calWidget.classList.add('is-hidden');
+  };
+
+  const showRejected = () => {
+    consentBlock.classList.add('is-hidden');
+    rejectedBlock?.classList.remove('is-hidden');
+    calWidget.classList.add('is-hidden');
+  };
+
+  const showCalendar = () => {
+    consentBlock.classList.add('is-hidden');
+    rejectedBlock?.classList.add('is-hidden');
+    calWidget.classList.remove('is-hidden');
+    loadCalWidget();
+  };
+
+  const loadCalWidget = () => {
+    if (calLoaded) return;
+    calLoaded = true;
+
+    (function (C, A, L) {
+      const p = function (a, ar) {
+        a.q.push(ar);
+      };
+      const d = C.document;
+      C.Cal =
+        C.Cal ||
+        function () {
+          const cal = C.Cal;
+          const ar = arguments;
+          if (!cal.loaded) {
+            cal.ns = {};
+            cal.q = cal.q || [];
+            d.head.appendChild(d.createElement('script')).src = A;
+            cal.loaded = true;
+          }
+          if (ar[0] === L) {
+            const api = function () {
+              p(api, arguments);
+            };
+            const namespace = ar[1];
+            api.q = api.q || [];
+            if (typeof namespace === 'string') {
+              cal.ns[namespace] = cal.ns[namespace] || api;
+              p(cal.ns[namespace], ar);
+              p(cal, ['initNamespace', namespace]);
+            } else p(cal, ar);
+            return;
+          }
+          p(cal, ar);
+        };
+    })(window, CAL_EMBED_URL, 'init');
+
+    Cal('init', '45min', { origin: 'https://app.cal.com' });
+    Cal.config = Cal.config || {};
+    Cal.config.forwardQueryParams = true;
+
+    Cal.ns['45min']('inline', {
+      elementOrSelector: '#my-cal-inline-45min',
+      config: {
+        layout: 'month_view',
+        useSlotsViewOnSmallScreen: 'true',
+        theme: 'light',
+        cssVarsPerTheme: { light: { 'cal-brand': '#c41e3a' } },
+      },
+      calLink: 'dominik-matoga-zkeojq/45min',
+    });
+
+    Cal.ns['45min']('ui', {
+      theme: 'light',
+      hideEventTypeDetails: false,
+      layout: 'month_view',
+      cssVarsPerTheme: { light: { 'cal-brand': '#c41e3a' } },
+    });
+  };
+
+  const unloadCalWidget = () => {
+    calLoaded = false;
+    document.querySelectorAll(`script[src="${CAL_EMBED_URL}"]`).forEach((script) => script.remove());
+    const calContainer = document.getElementById('my-cal-inline-45min');
+    if (calContainer) calContainer.innerHTML = '';
+    if (window.Cal) delete window.Cal;
+  };
+
+  const resetConsent = () => {
+    localStorage.removeItem(CAL_CONSENT_KEY);
+    unloadCalWidget();
+    showConsent();
+  };
+
+  acceptBtn?.addEventListener('click', () => {
+    localStorage.setItem(CAL_CONSENT_KEY, 'accepted');
+    showCalendar();
+  });
+
+  rejectBtn?.addEventListener('click', () => {
+    localStorage.setItem(CAL_CONSENT_KEY, 'rejected');
+    showRejected();
+  });
+
+  resetBtn?.addEventListener('click', resetConsent);
+
+  const savedConsent = localStorage.getItem(CAL_CONSENT_KEY);
+  if (savedConsent === 'accepted') {
+    showCalendar();
+  } else if (savedConsent === 'rejected') {
+    showRejected();
+  } else {
+    showConsent();
+  }
+};
+
+initCalConsent();
