@@ -773,7 +773,7 @@ h2 {
 
 .faq-question {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--accent);
@@ -1048,6 +1048,8 @@ h2 {
 .not-found-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   padding: 0.875rem 1.75rem;
   font-family: var(--font-display);
   font-size: 0.875rem;
@@ -1242,7 +1244,7 @@ h2 {
 
   .faq-question {
     padding: 1rem 2.75rem 1rem 1rem;
-    font-size: 0.9375rem;
+    font-size: 1rem;
   }
 
   .faq-question::after {
@@ -1276,6 +1278,12 @@ h2 {
 
   .page-cta-link {
     width: 100%;
+  }
+
+  .not-found-inner .not-found-btn {
+    display: flex;
+    width: 100%;
+    min-height: 2.75rem;
   }
 
   .footer-grid {
