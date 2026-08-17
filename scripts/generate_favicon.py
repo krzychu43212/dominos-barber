@@ -1,6 +1,7 @@
 """Generate favicon set and Open Graph image for Dominos Barber."""
 from __future__ import annotations
 
+import urllib.request
 from pathlib import Path
 
 from PIL import Image, ImageChops, ImageDraw, ImageFont
@@ -8,6 +9,15 @@ from PIL import Image, ImageChops, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parent.parent
 LOGO = ROOT / "images" / "logo.png"
 OUT_DIR = ROOT / "images"
+FONT_DIR = Path(__file__).resolve().parent / "fonts"
+CINZEL_VAR = FONT_DIR / "Cinzel-Variable.ttf"
+CINZEL_URL = "https://raw.githubusercontent.com/google/fonts/main/ofl/cinzel/Cinzel%5Bwght%5D.ttf"
+CINZEL_WEIGHTS = {
+    "regular": 400,
+    "medium": 500,
+    "semibold": 600,
+    "bold": 700,
+}
 LOGO_BG = (250, 247, 242, 255)
 ICON_BG = (255, 255, 255, 255)
 CREAM = (250, 247, 242, 255)
@@ -134,35 +144,34 @@ def save_ico(images: list[Image.Image], path: Path) -> None:
     )
 
 
-def load_font(size: int, serif: bool = False) -> ImageFont.FreeTypeFont:
-    candidates = (
-        [
-            "C:/Windows/Fonts/GEORGIAZ.TTF",
-            "C:/Windows/Fonts/GEORGIA.TTF",
-            "C:/Windows/Fonts/timesbd.ttf",
-        ]
-        if serif
-        else [
-            "C:/Windows/Fonts/segoeuib.ttf",
-            "C:/Windows/Fonts/segoeui.ttf",
-            "C:/Windows/Fonts/arial.ttf",
-        ]
-    )
-    for path in candidates:
-        if Path(path).exists():
-            return ImageFont.truetype(path, size)
-    return ImageFont.load_default()
+def ensure_cinzel_fonts() -> None:
+    FONT_DIR.mkdir(parents=True, exist_ok=True)
+    if CINZEL_VAR.exists() and CINZEL_VAR.stat().st_size > 0:
+        return
+    print("Downloading Cinzel variable font...")
+    urllib.request.urlretrieve(CINZEL_URL, CINZEL_VAR)
 
 
-def make_og_image(pole: Image.Image, path: Path) -> None:
+def load_cinzel(size: int, weight: str = "regular") -> ImageFont.FreeTypeFont:
+    ensure_cinzel_fonts()
+    font = ImageFont.truetype(str(CINZEL_VAR), size)
+    axis = CINZEL_WEIGHTS.get(weight, 400)
+    try:
+        font.set_variation_by_axes([axis])
+    except (AttributeError, OSError):
+        pass
+    return font
+
+
+def make_og_image(logo: Image.Image, path: Path) -> None:
     width, height = 1200, 630
     canvas = Image.new("RGBA", (width, height), CREAM)
     draw = ImageDraw.Draw(canvas)
 
-    font_title = load_font(72, serif=True)
-    font_tagline = load_font(34)
-    font_meta = load_font(26)
-    font_small = load_font(22)
+    font_title = load_cinzel(72, "bold")
+    font_tagline = load_cinzel(32, "regular")
+    font_meta = load_cinzel(26, "medium")
+    font_small = load_cinzel(22, "semibold")
 
     # Left accent bar
     draw.rectangle((0, 0, 8, height), fill=RED)
@@ -170,14 +179,14 @@ def make_og_image(pole: Image.Image, path: Path) -> None:
     # Decorative navy block (subtle)
     draw.rounded_rectangle((60, 60, width - 60, height - 60), radius=24, outline=NAVY, width=2)
 
-    # Pole on left inside card
-    pole_large = remove_background(pole.copy())
-    pole_large.thumbnail((220, 420), Image.Resampling.LANCZOS)
-    pole_x = 120
-    pole_y = (height - pole_large.height) // 2
-    canvas.paste(pole_large, (pole_x, pole_y), pole_large)
+    # Full logo (pole + banner) on the left
+    logo_large = logo.copy().convert("RGBA")
+    logo_large.thumbnail((320, 500), Image.Resampling.LANCZOS)
+    logo_x = 90
+    logo_y = (height - logo_large.height) // 2
+    canvas.paste(logo_large, (logo_x, logo_y), logo_large)
 
-    text_x = 400
+    text_x = 460
     text_w = width - text_x - 100
 
     # Red eyebrow line + label
@@ -244,7 +253,7 @@ def main() -> None:
     save_png(make_squircle_icon(pole, 32), ROOT / "favicon-32x32.png")
 
     og_path = OUT_DIR / "og-image.jpg"
-    make_og_image(pole, og_path)
+    make_og_image(logo, og_path)
 
     print("Created:")
     for p in [

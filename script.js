@@ -225,7 +225,28 @@ if (navToggle && mobileNav) {
 const FAQ_ANIMATION_MS = 400;
 
 function resetFaqWrapperHeight(wrapper) {
-  if (wrapper) wrapper.style.height = '';
+  if (!wrapper) return;
+  wrapper.style.height = '';
+  wrapper.classList.remove('is-animating');
+}
+
+function runFaqHeightTransition(wrapper, targetHeight, onComplete) {
+  wrapper.classList.add('is-animating');
+  wrapper.style.height = targetHeight;
+
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    wrapper.classList.remove('is-animating');
+    onComplete();
+  };
+
+  wrapper.addEventListener('transitionend', (event) => {
+    if (event.target === wrapper && event.propertyName === 'height') finish();
+  }, { once: true });
+
+  setTimeout(finish, FAQ_ANIMATION_MS + 50);
 }
 
 function openFaqItem(item) {
@@ -241,21 +262,14 @@ function openFaqItem(item) {
 
   item.open = true;
   wrapper.style.height = '0px';
-  wrapper.offsetHeight;
-  wrapper.style.height = `${wrapper.scrollHeight}px`;
 
-  let done = false;
-  const finish = () => {
-    if (done) return;
-    done = true;
-    if (item.open) wrapper.style.height = 'auto';
-  };
-
-  wrapper.addEventListener('transitionend', (event) => {
-    if (event.target === wrapper && event.propertyName === 'height') finish();
-  }, { once: true });
-
-  setTimeout(finish, FAQ_ANIMATION_MS + 50);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      runFaqHeightTransition(wrapper, `${wrapper.scrollHeight}px`, () => {
+        if (item.open) wrapper.style.height = 'auto';
+      });
+    });
+  });
 }
 
 function closeFaqItem(item) {
@@ -272,23 +286,16 @@ function closeFaqItem(item) {
   return new Promise((resolve) => {
     const startHeight = wrapper.style.height === 'auto' ? wrapper.scrollHeight : wrapper.offsetHeight;
     wrapper.style.height = `${startHeight}px`;
-    wrapper.offsetHeight;
-    wrapper.style.height = '0px';
 
-    let done = false;
-    const finish = () => {
-      if (done) return;
-      done = true;
-      item.open = false;
-      resetFaqWrapperHeight(wrapper);
-      resolve();
-    };
-
-    wrapper.addEventListener('transitionend', (event) => {
-      if (event.target === wrapper && event.propertyName === 'height') finish();
-    }, { once: true });
-
-    setTimeout(finish, FAQ_ANIMATION_MS + 50);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        runFaqHeightTransition(wrapper, '0px', () => {
+          item.open = false;
+          resetFaqWrapperHeight(wrapper);
+          resolve();
+        });
+      });
+    });
   });
 }
 
@@ -411,9 +418,14 @@ const initCalConsent = () => {
 
     Cal.ns['45min']('ui', {
       theme: 'light',
-      hideEventTypeDetails: false,
+      cssVarsPerTheme: {
+        light: {
+          'cal-brand': '#c41e3a'
+        }
+      },
+      hideEventTypeDetails: true,
+      showTimezoneWhenEventDetailsHidden: true,
       layout: 'month_view',
-      cssVarsPerTheme: { light: { 'cal-brand': '#c41e3a' } },
     });
   };
 

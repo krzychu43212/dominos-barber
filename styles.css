@@ -814,6 +814,10 @@ h2 {
   transition: height var(--faq-duration) var(--reveal-ease);
 }
 
+.faq-answer-wrapper.is-animating {
+  will-change: height;
+}
+
 .faq-answer {
   padding: 0 1.25rem 1.125rem;
   color: var(--text-muted);
@@ -1117,7 +1121,8 @@ h2 {
   }
 
   .nav--mobile {
-    display: block;
+    display: grid;
+    grid-template-rows: 0fr;
     position: absolute;
     top: 100%;
     left: 0;
@@ -1126,20 +1131,24 @@ h2 {
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border-subtle);
     box-shadow: var(--shadow);
-    max-height: 0;
     overflow: hidden;
     opacity: 0;
     visibility: hidden;
-    transition: max-height 0.35s ease, opacity 0.25s ease, visibility 0.25s ease;
+    transition:
+      grid-template-rows 0.45s var(--reveal-ease),
+      opacity 0.35s var(--reveal-ease),
+      visibility 0.35s var(--reveal-ease);
   }
 
   .nav--mobile.is-open {
-    max-height: 28rem;
+    grid-template-rows: 1fr;
     opacity: 1;
     visibility: visible;
   }
 
   .nav-mobile-list {
+    overflow: hidden;
+    min-height: 0;
     padding-bottom: 0.5rem;
   }
 
@@ -1148,13 +1157,16 @@ h2 {
   }
 
   .nav--mobile a {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 1rem 1.5rem;
     font-family: var(--font-display);
     font-size: 0.9375rem;
     font-weight: 500;
     letter-spacing: 0.06em;
     text-transform: uppercase;
+    text-align: center;
     color: var(--text-muted);
     transition: color var(--transition), background var(--transition);
   }
