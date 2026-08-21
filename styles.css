@@ -809,16 +809,18 @@ h2 {
 }
 
 .faq-answer-wrapper {
-  overflow: hidden;
-  height: 0;
-  transition: height var(--faq-duration) var(--reveal-ease);
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--faq-duration) var(--reveal-ease);
 }
 
-.faq-answer-wrapper.is-animating {
-  will-change: height;
+.faq-item[open] .faq-answer-wrapper {
+  grid-template-rows: 1fr;
 }
 
 .faq-answer {
+  overflow: hidden;
+  min-height: 0;
   padding: 0 1.25rem 1.125rem;
   color: var(--text-muted);
   border-top: 1px solid var(--border-subtle);
@@ -1108,6 +1110,11 @@ h2 {
   .nav--mobile {
     transition: none;
   }
+
+  .nav--mobile,
+  .nav--mobile.is-open {
+    transform: none;
+  }
 }
 
 /* --- Mobile --- */
@@ -1121,39 +1128,38 @@ h2 {
   }
 
   .nav--mobile {
-    display: grid;
-    grid-template-rows: 0fr;
+    display: block;
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     width: 100%;
-    justify-content: stretch;
-    justify-items: stretch;
-    gap: 0;
     background: rgba(250, 247, 242, 0.98);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border-subtle);
     box-shadow: var(--shadow);
     overflow: hidden;
+    transform: scaleY(0);
+    transform-origin: top center;
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
+    will-change: transform, opacity;
     transition:
-      grid-template-rows 0.45s var(--reveal-ease),
+      transform 0.45s var(--reveal-ease),
       opacity 0.35s var(--reveal-ease),
       visibility 0.35s var(--reveal-ease);
   }
 
   .nav--mobile.is-open {
-    grid-template-rows: 1fr;
+    transform: scaleY(1);
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
   }
 
   .nav-mobile-list {
     width: 100%;
-    overflow: hidden;
-    min-height: 0;
   }
 
   .nav-mobile-list li + li {

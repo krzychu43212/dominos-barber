@@ -221,84 +221,7 @@ if (navToggle && mobileNav) {
   });
 }
 
-// FAQ accordion — height-based expand/collapse, only one open at a time
-const FAQ_ANIMATION_MS = 400;
-
-function resetFaqWrapperHeight(wrapper) {
-  if (!wrapper) return;
-  wrapper.style.height = '';
-  wrapper.classList.remove('is-animating');
-}
-
-function runFaqHeightTransition(wrapper, targetHeight, onComplete) {
-  wrapper.classList.add('is-animating');
-  wrapper.style.height = targetHeight;
-
-  let done = false;
-  const finish = () => {
-    if (done) return;
-    done = true;
-    wrapper.classList.remove('is-animating');
-    onComplete();
-  };
-
-  wrapper.addEventListener('transitionend', (event) => {
-    if (event.target === wrapper && event.propertyName === 'height') finish();
-  }, { once: true });
-
-  setTimeout(finish, FAQ_ANIMATION_MS + 50);
-}
-
-function openFaqItem(item) {
-  if (item.open) return;
-
-  const wrapper = item.querySelector('.faq-answer-wrapper');
-
-  if (prefersReducedMotion || !wrapper) {
-    item.open = true;
-    resetFaqWrapperHeight(wrapper);
-    return;
-  }
-
-  item.open = true;
-  wrapper.style.height = '0px';
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      runFaqHeightTransition(wrapper, `${wrapper.scrollHeight}px`, () => {
-        if (item.open) wrapper.style.height = 'auto';
-      });
-    });
-  });
-}
-
-function closeFaqItem(item) {
-  if (!item.open) return Promise.resolve();
-
-  const wrapper = item.querySelector('.faq-answer-wrapper');
-
-  if (prefersReducedMotion || !wrapper) {
-    item.open = false;
-    resetFaqWrapperHeight(wrapper);
-    return Promise.resolve();
-  }
-
-  return new Promise((resolve) => {
-    const startHeight = wrapper.style.height === 'auto' ? wrapper.scrollHeight : wrapper.offsetHeight;
-    wrapper.style.height = `${startHeight}px`;
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        runFaqHeightTransition(wrapper, '0px', () => {
-          item.open = false;
-          resetFaqWrapperHeight(wrapper);
-          resolve();
-        });
-      });
-    });
-  });
-}
-
+// FAQ accordion — CSS grid expand/collapse, only one open at a time
 document.querySelectorAll('.faq-list').forEach((list) => {
   list.querySelectorAll('.faq-item').forEach((item) => {
     const summary = item.querySelector('.faq-question');
@@ -307,15 +230,15 @@ document.querySelectorAll('.faq-list').forEach((list) => {
       event.preventDefault();
 
       if (item.open) {
-        closeFaqItem(item);
+        item.open = false;
         return;
       }
 
       list.querySelectorAll('.faq-item').forEach((other) => {
-        if (other !== item && other.open) closeFaqItem(other);
+        if (other !== item && other.open) other.open = false;
       });
 
-      openFaqItem(item);
+      item.open = true;
     });
   });
 });
